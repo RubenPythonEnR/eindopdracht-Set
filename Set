@@ -6,3 +6,43 @@
 
 # een algoritme scrijven die zelf een set kan vinden, en de input van de mens kan verifieren
   #en een timer maken die wacht op de speler
+
+
+#poging tot poging 1
+import random
+
+class Card:
+    def __init__(self, aantal, kleur, vorm, vulling):
+        self.aantal = aantal
+        self.kleur = kleur
+        self.vorm = vorm
+        self.vulling = vulling
+    def is_set(self, kaart1, kaart2):
+        return ...
+        
+    def create_specific_card(aantal,kleur,vorm,vulling):
+        card = (aantal,kleur,vorm,vulling)
+        return card
+
+    def create_random_card():
+        aantal = random.randrange(0,2)
+        kleur = random.randrange(0,2)
+        vorm = random.randrange(0,2)
+        vulling = random.randrange(0,2)
+        return Card(aantal,kleur,vorm,vulling)
+    
+# alles heeft 3 mogelijkheden
+kaart = Card(aantal = 0, ...)
+
+def main():
+    card = kaart
+    
+
+class SetGame:
+    def __init__()
+    
+    def set_found(kaart1, kaart2, kaart3)
+        #update de 12 opgeslagen kaarten
+
+    def visualize_game():
+
