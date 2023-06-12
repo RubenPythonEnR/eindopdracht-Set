@@ -12,9 +12,7 @@ class Card:
         self.vorm = vorm
         self.vulling = vulling
 
-def is_set(self, spel):
-    return ...
-        
+#om het totale kaarten set te maken        
 def create_total_cardset():
     pakket = []
     n = 0
@@ -30,7 +28,17 @@ def create_total_cardset():
                     n += 1
                     pakket.append(["kaart", n, kaart.aantal,kaart.kleur,kaart.vorm,kaart.vulling])
     return pakket
-
+#Pak een paar random kaarten uit het totale pakket
+def create_speelveld():
+    deck = create_total_cardset()
+    speelveld = []
+    for _ in range(1,13):
+        a = random.randrange(len(deck))
+        speelveld.append(deck[a])
+        deck.remove(deck[a])
+   
+    return speelveld
+#maak een random kaart
 def create_random_card():
     aantal = random.randrange(1,4)
     kleur = random.randrange(1,4)
@@ -40,10 +48,12 @@ def create_random_card():
     return kaart
 
 def main():
-    spel = []
+    #maakt een speelveld met random gemaakte kaarten
+    random_speelveld = []
     for i in range(1,13):
         kaart = create_random_card()
-        spel.append(["kaart", i, kaart.aantal,kaart.kleur,kaart.vorm,kaart.vulling])
-    print("totale pakket", create_total_cardset())
-    print("speelveld", spel)
+        random_speelveld.append(["kaart", i, kaart.aantal,kaart.kleur,kaart.vorm,kaart.vulling])
+    print("random speelveld", random_speelveld)
+    #maakt een speelveld met random getrokken kaarten uit het totale pakket
+    print("random speelveld 2",create_speelveld())
 main()
