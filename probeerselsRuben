@@ -1,2 +1,49 @@
 #we kunnen dus pygame gebruiken voor het spel voor zowel de weergaven al de interactie van de kaarten. Maar bij mij lukt het installeren al niet
 #dus dat ga ik dinsdag even vragen
+
+#ik heb hieronder wat jij had gemaakt wat aangepast. Het maakt nu twee lijsten van lijsten, 1 is het complete deck en 2 is een speelveld met twaalf random
+# kaarten waar alle kleuren en vormen worden aangegeven met getallen 1 tot 3.
+
+import random
+class Card:
+    def __init__(self, aantal, kleur, vorm, vulling):
+        self.aantal = aantal
+        self.kleur = kleur
+        self.vorm = vorm
+        self.vulling = vulling
+
+def is_set(self, spel):
+    return ...
+        
+def create_total_cardset():
+    pakket = []
+    n = 0
+    for i in range(1,4):
+        aantal = i 
+        for j in range(1,4):
+            kleur = j
+            for k in range(1,4):
+                vorm = k
+                for l in range(1,4):
+                    vulling = l
+                    kaart = Card(aantal,kleur,vorm,vulling)
+                    n += 1
+                    pakket.append(["kaart", n, kaart.aantal,kaart.kleur,kaart.vorm,kaart.vulling])
+    return pakket
+
+def create_random_card():
+    aantal = random.randrange(1,4)
+    kleur = random.randrange(1,4)
+    vorm = random.randrange(1,4)
+    vulling = random.randrange(1,4)
+    kaart = Card(aantal,kleur,vorm,vulling)
+    return kaart
+
+def main():
+    spel = []
+    for i in range(1,13):
+        kaart = create_random_card()
+        spel.append(["kaart", i, kaart.aantal,kaart.kleur,kaart.vorm,kaart.vulling])
+    print("totale pakket", create_total_cardset())
+    print("speelveld", spel)
+main()
