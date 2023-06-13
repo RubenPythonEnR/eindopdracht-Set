@@ -1,1 +1,9 @@
-
+def is_set(self, kaart1, kaart2):
+    if (kaart1.aantal == kaart2.aantal == self.aantal) or (kaart1.aantal != kaart2.aantal != self.aantal != kaart1.aantal):
+        if (kaart1.kleur == kaart2.kleur == self.kleur) or (kaart1.kleur != kaart2.kleur != self.kleur != kaart1.kleur):
+            if (kaart1.vorm == kaart2.vorm == self.vorm) or (kaart1.vorm != kaart2.vorm != self.vorm != kaart1.vorm):
+                if (kaart1.vulling == kaart2.vulling == self.vulling) or (kaart1.vulling != kaart2.vulling != self.vulling != kaart1.vulling):
+                    return True
+    return False
+def is_set_helemaal(kaart1, kaart2, kaart3):
+    return kaart1.is_set(kaart2) and kaart1.is_set(kaart3) and kaart2.is_set(kaart3)
