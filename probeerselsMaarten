@@ -1,9 +1,42 @@
-def is_set(self, kaart1, kaart2):
-    if (kaart1.aantal == kaart2.aantal == self.aantal) or (kaart1.aantal != kaart2.aantal != self.aantal != kaart1.aantal):
-        if (kaart1.kleur == kaart2.kleur == self.kleur) or (kaart1.kleur != kaart2.kleur != self.kleur != kaart1.kleur):
-            if (kaart1.vorm == kaart2.vorm == self.vorm) or (kaart1.vorm != kaart2.vorm != self.vorm != kaart1.vorm):
-                if (kaart1.vulling == kaart2.vulling == self.vulling) or (kaart1.vulling != kaart2.vulling != self.vulling != kaart1.vulling):
-                    return True
-    return False
+import random
+import itertools
+import numpy 
+
+class Kaart:
+    def __init__(self, aantal, kleur, vorm, vulling):
+        self.aantal = aantal
+        self.kleur = kleur
+        self.vorm = vorm
+        self.vulling = vulling
+
+    def is_set(self, kaart2):
+        if (self.aantal == kaart2.aantal) or (self.aantal != kaart2.aantal):
+            if (kaart2.kleur == self.kleur) or (kaart2.kleur != self.kleur):
+                if (kaart2.vorm == self.vorm) or (kaart2.vorm != self.vorm):
+                    if (kaart2.vulling == self.vulling) or (kaart2.vulling != self.vulling):
+                        return True
+        return False
+    
+    def geef_willekeurige_kaart(stack_kaarten):
+        willekeurige_kaart = random.choice(stack_kaarten)
+        return willekeurige_kaart
+    
 def is_set_helemaal(kaart1, kaart2, kaart3):
     return kaart1.is_set(kaart2) and kaart1.is_set(kaart3) and kaart2.is_set(kaart3)
+
+class Speelveld:
+    def __init__(self, grootte, stack_kaarten):
+        self.grootte = 12
+        self.veld = []
+        self.stack_kaarten = itertools.product((0,1,2), repeat=4)
+    
+    def maak_speelveld(self):
+        self.veld = numpy.random.choice(self.stack_kaarten, 12)
+
+    def update_speelveld(self):
+        speelveld = ...
+        return speelveld
+
+    def create_specific_card(aantal,kleur,vorm,vulling):
+        card = (aantal,kleur,vorm,vulling)
+        return card
