@@ -8,41 +8,63 @@
   #en een timer maken die wacht op de speler
 
 
-#poging tot poging 1
+#poging 2
 import random
+import itertools
+import numpy 
 
-class Card:
+class Kaart:
     def __init__(self, aantal, kleur, vorm, vulling):
         self.aantal = aantal
         self.kleur = kleur
         self.vorm = vorm
         self.vulling = vulling
-    def is_set(self, kaart1, kaart2):
-        return ...
-        
-    def create_specific_card(aantal,kleur,vorm,vulling):
-        card = (aantal,kleur,vorm,vulling)
-        return card
 
-    def create_random_card():
-        aantal = random.randrange(0,2)
-        kleur = random.randrange(0,2)
-        vorm = random.randrange(0,2)
-        vulling = random.randrange(0,2)
-        return Card(aantal,kleur,vorm,vulling)
+    def is_set(self, kaart2):
+        if (self.aantal == kaart2.aantal) or (self.aantal != kaart2.aantal):
+            if (kaart2.kleur == self.kleur) or (kaart2.kleur != self.kleur):
+                if (kaart2.vorm == self.vorm) or (kaart2.vorm != self.vorm):
+                    if (kaart2.vulling == self.vulling) or (kaart2.vulling != self.vulling):
+                        return True
+        return False
     
-# alles heeft 3 mogelijkheden
-kaart = Card(aantal = 0, ...)
+    def geef_willekeurige_kaart(stack_kaarten):
+        willekeurige_kaart = random.choice(stack_kaarten)
+        return willekeurige_kaart
+    
+    def is_set_helemaal(kaart1, kaart2, kaart3):
+        return kaart1.is_set(kaart2) and kaart1.is_set(kaart3) and kaart2.is_set(kaart3)
+    
+class Speelveld:
+    def __init__(self):
+        self.veld = []
+        self.stack_kaarten = list(itertools.product((0,1,2), repeat=4))
+    
+    def maak_speelveld(self):
+        self.veld = random.choice(self.stack_kaarten, 12)
 
-def main():
-    card = kaart
-    
+    def zoek_set(self):
+            mogelijke_sets = []
+            for i in range(len(self.veld)):
+                for j in range(i + 1, len(self.veld)):
+                    for k in range(j + 1, len(self.veld)):
+                        kaart1 = self.veld[i]
+                        kaart2 = self.veld[j]
+                        kaart3 = self.veld[k]
+                        if Kaart.is_set_helemaal(kaart1, kaart2, kaart3):
+                            mogelijke_sets.append([kaart1,kaart2,kaart3])
+            return mogelijke_sets
+
+    def extra_kaarten_speelveld(self):
+        self.veld += [Kaart(*Kaart.geef_willekeurige_kaart(self.stack_kaarten)) for _ in range(3)]
+        return self.veld
 
 class SetGame:
-    def __init__()
-    
-    def set_found(kaart1, kaart2, kaart3)
-        #update de 12 opgeslagen kaarten
-
+    def __init__(self, ):
+        return ...
+    def set_found(kaart1, kaart2, kaart3):
+        
+        return ...
     def visualize_game():
+        return...
 
