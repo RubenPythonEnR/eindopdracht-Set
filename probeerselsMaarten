@@ -54,10 +54,13 @@ class Speelveld:
     # en eventueel extra kaarten kan toevoegen als er geen set is.
     def __init__(self):
         self.veld = []
+        self.aantal_startkaarten = 12
         self.stack_kaarten = list(itertools.product((0,1,2), repeat=4))
     
-    def maak_speelveld(self):
-        self.veld = random.choice(self.stack_kaarten, 12)
+    def maak_speelveld(self, aantal_startkaarten):
+        self.veld = list(random.choice(self.stack_kaarten, aantal_startkaarten))
+        Speelveld.verwijder_kaarten(self.veld)
+        return self.veld
 
     def zoek_set(self):
             mogelijke_sets = []
@@ -73,4 +76,15 @@ class Speelveld:
 
     def extra_kaarten_speelveld(self):
         self.veld += [Kaart(*Kaart.geef_willekeurige_kaart(self.stack_kaarten)) for _ in range(3)]
+        Speelveld.verwijder_kaarten(self.veld)
         return self.veld
+    
+    def verwijder_kaarten(self, kaart):
+        for i in kaart:
+            if kaart[i] in self.stack_kaarten:    
+                self.stack_kaarten.pop[i]
+
+    def nieuw_speelveld(self):
+        self.stack_kaarten = list(itertools.product((0,1,2), repeat=4))
+        Speelveld.maak_speelveld(self.aantal_startkaarten)
+
