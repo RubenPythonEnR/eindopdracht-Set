@@ -81,8 +81,9 @@ class Speelveld:
         self.stack_kaarten = [Kaart(tup[0], tup[1], tup[2], tup[3]) for tup in list(itertools.product((0,1,2), repeat=4))]
     
     def maak_speelveld(self):
-        self.veld = list(random.choice(self.stack_kaarten, self.aantal_startkaarten))
-        Speelveld.verwijder_kaarten(self.veld)
+        kaarten_speelveld = list(random.sample(self.stack_kaarten, self.aantal_startkaarten))
+        self.veld += kaarten_speelveld
+        self.verwijder_kaarten(kaarten_speelveld)
         return self.veld
 
     def zoek_set(self):
@@ -102,12 +103,12 @@ class Speelveld:
         Speelveld.verwijder_kaarten(self.veld)
     
     def verwijder_kaarten(self, kaart):
-        for i in kaart:
+        for i in range(len(kaart)):
             if kaart[i] in self.stack_kaarten:    
-                self.stack_kaarten.pop[i]
-            for j in range(len(self.veld)):
-                if kaart [i] == self.veld[j]:
-                    self.veld.pop[j]
+                self.stack_kaarten.pop(i)
+            # for j in range(len(self.veld)):
+            #     if kaart [i] == self.veld[j]:
+            #         self.veld.pop(j)
 
     def nieuw_speelveld(self):
         self.stack_kaarten = list(itertools.product((0,1,2), repeat=4))
@@ -187,16 +188,30 @@ pygame.display.set_caption("Game")
 kaart_group = pygame.sprite.Group()
 
 speelveld = Speelveld()
-
+speelveld.maak_speelveld()
 #creates a field of cards
-for row in range(3):
-    for col in range(4):
-        kaart_instance = Kaart(0,2,0,1)   #.geef_willekeurige_kaart(speelveld.stack_kaarten)
-        kaart_instance.give_position((row*100, col*200))
-        kaart_group.add(kaart_instance)
+row = 0
+col = 0
+for i in range(len(speelveld.veld)):
+    kaart_instance = speelveld.veld[i]
+    kaart_instance.give_position((col,row))
+    kaart_group.add(kaart_instance)
+    if col == 0:
+        col +=100
+    elif col %300 != 0:
+        col += 100
+    else:
+        row += 200
+        col -=300
+
+# for row in range(3):
+#     for col in range(4):
+#         kaart_instance = Kaart(0,2,0,1)   #.geef_willekeurige_kaart(speelveld.stack_kaarten)
+#         kaart_instance.give_position((row*100, col*200))
+#         kaart_group.add(kaart_instance)
 selecties =[]
+
 while True:
-    
     for event in pygame.event.get():
         if event.type == QUIT:
             pygame.quit()
