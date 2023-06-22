@@ -1,5 +1,7 @@
 import random
-import itertools 
+import itertools
+import time
+import datetime
 
 class Kaart:
     # Maakt een klasse kaart met methodes die kunnen checken of het een set is, een willekeurige kaart kunnen geven
@@ -57,8 +59,8 @@ class Speelveld:
         self.aantal_startkaarten = 12
         self.stack_kaarten = list(itertools.product((0,1,2), repeat=4))
     
-    def maak_speelveld(self, aantal_startkaarten):
-        self.veld = list(random.choice(self.stack_kaarten, aantal_startkaarten))
+    def maak_speelveld(self):
+        self.veld = list(random.choice(self.stack_kaarten, self.aantal_startkaarten))
         Speelveld.verwijder_kaarten(self.veld)
         return self.veld
 
@@ -77,7 +79,6 @@ class Speelveld:
     def extra_kaarten_speelveld(self):
         self.veld += [Kaart(*Kaart.geef_willekeurige_kaart(self.stack_kaarten)) for _ in range(3)]
         Speelveld.verwijder_kaarten(self.veld)
-        return self.veld
     
     def verwijder_kaarten(self, kaart):
         for i in kaart:
@@ -87,4 +88,45 @@ class Speelveld:
     def nieuw_speelveld(self):
         self.stack_kaarten = list(itertools.product((0,1,2), repeat=4))
         Speelveld.maak_speelveld(self.aantal_startkaarten)
+
+class Spel:
+    def __init__(self, moeilijkheid):
+        self.speler = 0
+        self.computer = 0
+        self.moeilijkheid = moeilijkheid
+    
+    def start_spel():
+        Speelveld.maak_speelveld()
+        #laat timer aflopen
+
+    def timer(self, moeilijkheid):
+        tijd = moeilijkheid
+        while tijd > 0:
+            timer = datetime.timedelta(seconds = moeilijkheid)
+            #visualiseer timer
+            print(timer, end="\r")
+            time.sleep(1)
+            tijd -=1
+        if len(Speelveld.zoek_set()) == False:
+            Speelveld.extra_kaarten_speelveld()
+        else:
+            Spel.punt_toewijzen(self.computer)
+
+    def punt_toewijzen(punten):
+        punten +=1
+        return punten
+
+    def check_selectie(self, selectie1, selectie2, selectie3):
+        if Kaart.is_set_helemaal(selectie1, selectie2, selectie3):
+            setje = [selectie1, selectie2, selectie3]
+            Speelveld.verwijder_kaarten(setje)
+            Speelveld.extra_kaarten_speelveld()
+            Spel.punt_toewijzen(self.speler)
+        else:
+            Spel.punt_toewijzen(self.computer)
+
+    def nieuw_spel(self):
+        self.speler = 0
+        self.computer = 0
+        Speelveld.nieuw_speelveld()
 
