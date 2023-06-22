@@ -90,14 +90,15 @@ class Speelveld:
         Speelveld.maak_speelveld(self.aantal_startkaarten)
 
 class Spel:
-    def __init__(self, moeilijkheid):
+    # Beschrijft de onderdelen van het spel en de mogelijke acties.
+    def __init__(self):
         self.speler = 0
         self.computer = 0
-        self.moeilijkheid = moeilijkheid
+        self.moeilijkheid = 30
     
-    def start_spel():
+    def start_spel(self):
         Speelveld.maak_speelveld()
-        #laat timer aflopen
+        Spel.timer(self.moeilijkheid)
 
     def timer(self, moeilijkheid):
         tijd = moeilijkheid
@@ -119,6 +120,7 @@ class Spel:
     def check_selectie(self, selectie1, selectie2, selectie3):
         if Kaart.is_set_helemaal(selectie1, selectie2, selectie3):
             setje = [selectie1, selectie2, selectie3]
+            Spel.timer(self.moeilijkheid)
             Speelveld.verwijder_kaarten(setje)
             Speelveld.extra_kaarten_speelveld()
             Spel.punt_toewijzen(self.speler)
@@ -129,4 +131,5 @@ class Spel:
         self.speler = 0
         self.computer = 0
         Speelveld.nieuw_speelveld()
+        Spel.timer(self.moeilijkheid)
 
