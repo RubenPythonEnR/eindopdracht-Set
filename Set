@@ -89,11 +89,7 @@ class Speelveld:
                         return True
         return False
     
-    # def is_set_helemaal(kaart1, kaart2, kaart3):
-    #     if kaart1.is_set(kaart2) and kaart1.is_set(kaart3) and kaart2.is_set(kaart3):
-    #         return True
-    #     else:
-    #         return False
+
     
     def zoek_set(self):
             mogelijke_sets = []
@@ -103,7 +99,7 @@ class Speelveld:
                         kaart1 = self.veld[i]
                         kaart2 = self.veld[j]
                         kaart3 = self.veld[k]
-                        if Speelveld.is_set_helemaal(kaart1, kaart2, kaart3):
+                        if Speelveld.is_set(kaart1, kaart2, kaart3):
                             mogelijke_sets.append([kaart1,kaart2,kaart3])
             return mogelijke_sets
 
@@ -155,7 +151,7 @@ class Spel:
         return punten
 
     def check_selectie(self, selectie1, selectie2, selectie3):
-        if Speelveld.is_set_helemaal(selectie1, selectie2, selectie3):
+        if Speelveld.is_set(selectie1, selectie2, selectie3):
             print("true")
             setje = [selectie1, selectie2, selectie3]
             #Spel.timer(self.moeilijkheid)
