@@ -28,7 +28,7 @@ class Kaart(pygame.sprite.Sprite):
         
 
     def load(self):
-        self.image = pygame.image.load(f"D:\MLS\PythonandR\kaarten\{self.return_string()}.gif")
+        self.image = pygame.image.load(f"C:\\Bruikbaar\\Utrecht\\Jaar 4\\Python en R\\Project\\kaarten\\kaarten\\{self.return_string()}.gif")
     
     # def __eq__(self, other):
     #     return self.is_set(other)
@@ -89,6 +89,8 @@ class Speelveld:
                         return True
         return False
     
+
+    
     def zoek_set(self):
             mogelijke_sets = []
             for i in range(len(self.veld)):
@@ -106,9 +108,10 @@ class Speelveld:
         self.veld += nieuwe_kaarten
         self.verwijder_kaarten(nieuwe_kaarten)
     
-    def verwijder_kaarten(self, kaarten):
-        for i in kaarten:  
-            self.stack_kaarten.remove(i)
+    def verwijder_kaarten(self, setje):
+        for i in range(len(setje)):
+            if setje[i] in self.stack_kaarten:    
+                self.stack_kaarten.pop(i)
     
     def verwijder_kaarten_speelveld(self, setje):
         for i in setje:
@@ -121,8 +124,6 @@ class Speelveld:
 class Spel:
     """Beschrijft de onderdelen van het spel en de mogelijke acties zoals een timer, en een scorde bord."""
     def __init__(self):
-        self.speler = 0
-        self.computer = 0
         self.moeilijkheid = 30
     
     def start_spel(self):
@@ -159,8 +160,6 @@ class Spel:
             #Spel.punt_toewijzen(self.computer)
 
     def nieuw_spel(self):
-        self.speler = 0
-        self.computer = 0
         Speelveld.nieuw_speelveld()
         Spel.timer(self.moeilijkheid)
 
@@ -176,15 +175,21 @@ BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 
 # Screen information
-SCREEN_WIDTH = 600
+SCREEN_WIDTH = 400
 SCREEN_HEIGHT = 600
 
 DISPLAY = pygame.display
-DISPLAYSURF = DISPLAY.set_mode((600, 600))
-DISPLAYSURF.fill(WHITE)
+DISPLAYSURF = DISPLAY.set_mode((700, 600))
 pygame.display.set_caption("Game")
 
-huidige_tijd = 0
+
+# Text variabelen voor score en tijd
+wit = (255,255,255)
+speler_score = 0
+computer_score = 0
+speler_naam = "Speler 1"
+computer_naam = "Computer"
+lettertype = pygame.font.Font("freesansbold.ttf", 32)
 
 
 
@@ -232,8 +237,6 @@ while True:
 
             if len(selecties) == 3 and Speelveld.is_set(selecties[0], selecties[1], selecties[2]):
                 speelveld.verwijder_kaarten_speelveld(selecties)
-                for i in selecties:
-                    kaart_group.remove(i)
                 speelveld.extra_kaarten_speelveld()
                 teken_veld(speelveld)
                 selecties = []
@@ -250,6 +253,16 @@ while True:
     DISPLAYSURF.fill(BLACK)
     kaart_group.draw(DISPLAYSURF)
     
+    speler_text = lettertype.render(f"{speler_score}",False, wit)
+    DISPLAYSURF.blit(speler_text, (600,70))
+    speler1_text = lettertype.render(f"{speler_naam}",False, wit)
+    DISPLAYSURF.blit(speler1_text, (540,20))
+    computer_text = lettertype.render(f"{computer_score}",False, wit)
+    DISPLAYSURF.blit(computer_text, (600,170))
+    computer1_text = lettertype.render(f"{computer_naam}",False, wit)
+    DISPLAYSURF.blit(computer1_text, (530,120))
+
+    #kaart_group.draw(DISPLAYSURF)
 
     DISPLAY.update()
     FramePerSec.tick(FPS)
