@@ -8,13 +8,14 @@ import time
 import datetime
 
 class Kaart(pygame.sprite.Sprite):
-    # Maakt een klasse kaart met methodes die kunnen checken of het een set is, een willekeurige kaart kunnen geven
-    # en een string kan geven zodat het bestand met de afbeelding gevonden kan worden
+    """de klasse kaart heeft kaart objecten met een kleur, vorm, vulling, aantal en een sprite met een rect. Hiernaast heeft de klasse Kaart
+    ook methods het tekenen van de kaarten en een random kaart te trekken"""
     def __init__(self, kleur, vorm, vulling, aantal):
         self.kleur = kleur
         self.vorm = vorm
         self.vulling = vulling
         self.aantal = aantal
+        self.attrs = (self.kleur, self.vorm, self.vulling, self.aantal)
         super().__init__()
         self.load()
         self.rect = self.image.get_rect()
@@ -29,24 +30,17 @@ class Kaart(pygame.sprite.Sprite):
     def load(self):
         self.image = pygame.image.load(f"D:\MLS\PythonandR\kaarten\{self.return_string()}.gif")
     
+    # def __eq__(self, other):
+    #     return self.is_set(other)
 
     def draw(self, surface):
         surface.blit(self.image, self.rect)
 
-    def is_set(self, kaart2):
-        if (self.aantal == kaart2.aantal) or (self.aantal != kaart2.aantal):
-            if (kaart2.kleur == self.kleur) or (kaart2.kleur != self.kleur):
-                if (kaart2.vorm == self.vorm) or (kaart2.vorm != self.vorm):
-                    if (kaart2.vulling == self.vulling) or (kaart2.vulling != self.vulling):
-                        return True
-        return False
     
     def geef_willekeurige_kaart(stack_kaarten):
         willekeurige_kaart = random.choice(stack_kaarten)
         return willekeurige_kaart
     
-    def is_set_helemaal(kaart1, kaart2, kaart3):
-        return kaart1.is_set(kaart2) and kaart1.is_set(kaart3) and kaart2.is_set(kaart3)
     
     def return_string(self):
         kleur_naam = {
@@ -72,9 +66,10 @@ class Kaart(pygame.sprite.Sprite):
         naam_bestand = kleur_naam[self.kleur] + vorm_naam[self.vorm] + vulling_naam[self.vulling] + aantal_naam[self.aantal]
         return naam_bestand
     
+    
 class Speelveld:
-    # Maakt een klasse speelveld die alle mogelijke kaarten bevat, een speelveld kan maken, sets kan zoeken
-    # en eventueel extra kaarten kan toevoegen als er geen set is.
+    """Maakt een klasse speelveld die alle mogelijke kaarten bevat, een speelveld kan maken, sets kan zoeken
+    en eventueel extra kaarten kan toevoegen als er geen set is."""
     def __init__(self):
         self.veld = []
         self.aantal_startkaarten = 12
@@ -86,6 +81,14 @@ class Speelveld:
         self.verwijder_kaarten(kaarten_speelveld)
         return self.veld
 
+    def is_set(kaart1, kaart2, kaart3):
+        if (kaart1.aantal == kaart2.aantal == kaart3.aantal ) or ((kaart1.aantal != kaart2.aantal !=kaart3.aantal) and (kaart1.aantal != kaart3.aantal)):
+            if (kaart1.kleur == kaart2.kleur == kaart3.kleur) or ((kaart1.kleur != kaart2.kleur !=kaart3.kleur)and (kaart1.kleur != kaart3.kleur)):
+                if (kaart1.vorm == kaart2.vorm == kaart3.vorm) or ((kaart1.vorm != kaart2.vorm !=kaart3.vorm)and (kaart1.vorm != kaart3.vorm)):
+                    if (kaart1.vulling == kaart2.vulling == kaart3.vulling) or ((kaart1.vulling != kaart2.vulling !=kaart3.vulling)and (kaart1.vulling != kaart3.vulling)):
+                        return True
+        return False
+    
     def zoek_set(self):
             mogelijke_sets = []
             for i in range(len(self.veld)):
@@ -94,28 +97,29 @@ class Speelveld:
                         kaart1 = self.veld[i]
                         kaart2 = self.veld[j]
                         kaart3 = self.veld[k]
-                        if Kaart.is_set_helemaal(kaart1, kaart2, kaart3):
+                        if Speelveld.is_set(kaart1, kaart2, kaart3):
                             mogelijke_sets.append([kaart1,kaart2,kaart3])
             return mogelijke_sets
 
     def extra_kaarten_speelveld(self):
-        self.veld += [Kaart(*Kaart.geef_willekeurige_kaart(self.stack_kaarten)) for _ in range(3)]
-        Speelveld.verwijder_kaarten(self.veld)
+        nieuwe_kaarten = [Kaart.geef_willekeurige_kaart(self.stack_kaarten) for _ in range(3)]
+        self.veld += nieuwe_kaarten
+        self.verwijder_kaarten(nieuwe_kaarten)
     
-    def verwijder_kaarten(self, kaart):
-        for i in range(len(kaart)):
-            if kaart[i] in self.stack_kaarten:    
-                self.stack_kaarten.pop(i)
-            # for j in range(len(self.veld)):
-            #     if kaart [i] == self.veld[j]:
-            #         self.veld.pop(j)
-
+    def verwijder_kaarten(self, kaarten):
+        for i in kaarten:  
+            self.stack_kaarten.remove(i)
+    
+    def verwijder_kaarten_speelveld(self, setje):
+        for i in setje:
+            self.veld.remove(i)
+            
     def nieuw_speelveld(self):
         self.stack_kaarten = list(itertools.product((0,1,2), repeat=4))
         Speelveld.maak_speelveld(self.aantal_startkaarten)
 
 class Spel:
-    # Beschrijft de onderdelen van het spel en de mogelijke acties.
+    """Beschrijft de onderdelen van het spel en de mogelijke acties zoals een timer, en een scorde bord."""
     def __init__(self):
         self.speler = 0
         self.computer = 0
@@ -143,14 +147,16 @@ class Spel:
         return punten
 
     def check_selectie(self, selectie1, selectie2, selectie3):
-        if Kaart.is_set_helemaal(selectie1, selectie2, selectie3):
+        if Speelveld.is_set(selectie1, selectie2, selectie3):
+            print("true")
             setje = [selectie1, selectie2, selectie3]
-            Spel.timer(self.moeilijkheid)
-            Speelveld.verwijder_kaarten(setje)
-            Speelveld.extra_kaarten_speelveld()
-            Spel.punt_toewijzen(self.speler)
+            #Spel.timer(self.moeilijkheid)
+            #Speelveld.verwijder_kaarten(setje)
+            #Speelveld.extra_kaarten_speelveld()
+            #Spel.punt_toewijzen(self.speler)
         else:
-            Spel.punt_toewijzen(self.computer)
+            print("false")
+            #Spel.punt_toewijzen(self.computer)
 
     def nieuw_spel(self):
         self.speler = 0
@@ -159,56 +165,52 @@ class Spel:
         Spel.timer(self.moeilijkheid)
 
 
+"""Hier begint de echte display en de gameloop"""
 pygame.init()
 
 FPS = 5
 FramePerSec = pygame.time.Clock()
 
 # Predefined some colors
-BLUE = (0, 0, 255)
-RED = (255, 0, 0)
-GREEN = (0, 255, 0)
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 
 # Screen information
-SCREEN_WIDTH = 400
+SCREEN_WIDTH = 600
 SCREEN_HEIGHT = 600
 
 DISPLAY = pygame.display
-DISPLAYSURF = DISPLAY.set_mode((400, 600))
+DISPLAYSURF = DISPLAY.set_mode((600, 600))
 DISPLAYSURF.fill(WHITE)
 pygame.display.set_caption("Game")
 
-
-
+huidige_tijd = 0
 
 
 
 kaart_group = pygame.sprite.Group()
-
+spel = Spel()
 speelveld = Speelveld()
 speelveld.maak_speelveld()
-#creates a field of cards
-row = 0
-col = 0
-for i in range(len(speelveld.veld)):
-    kaart_instance = speelveld.veld[i]
-    kaart_instance.give_position((col,row))
-    kaart_group.add(kaart_instance)
-    if col == 0:
-        col +=100
-    elif col %300 != 0:
-        col += 100
-    else:
-        row += 200
-        col -=300
 
-# for row in range(3):
-#     for col in range(4):
-#         kaart_instance = Kaart(0,2,0,1)   #.geef_willekeurige_kaart(speelveld.stack_kaarten)
-#         kaart_instance.give_position((row*100, col*200))
-#         kaart_group.add(kaart_instance)
+#creates a field of cards
+def teken_veld(speelveld):
+    row = 0
+    col = 0
+    for i in range(len(speelveld.veld)):
+        kaart_instance = speelveld.veld[i]
+        kaart_instance.give_position((col,row))
+        kaart_group.add(kaart_instance)
+        if col == 0:
+            col +=100
+        elif col %300 != 0:
+            col += 100
+        else:
+            row += 200
+            col -=300
+teken_veld(speelveld) 
+
+
 selecties =[]
 
 while True:
@@ -217,14 +219,30 @@ while True:
             pygame.quit()
             sys.exit()
 
+        selectie_gemaakt = False
+
         if event.type == pygame.MOUSEBUTTONDOWN:
-            for kaart_instance in kaart_group:
-                if kaart_instance.rect.collidepoint(pygame.mouse.get_pos()):
-                    print(kaart_instance.return_string())
-                    selecties.append(kaart_instance)
-                    if len(selecties) == 3:
-                        Spel.check_selectie(selecties[0],selecties[1],selecties[2])
-                        print("tadaa",Spel.speler)
+            if not selectie_gemaakt:
+                for kaart_instance in kaart_group:
+                    if kaart_instance.rect.collidepoint(pygame.mouse.get_pos()):
+                        print(kaart_instance.attrs)
+                        selecties.append(kaart_instance)
+                        selectie_gemaakt = True
+                        break
+
+            if len(selecties) == 3 and Speelveld.is_set(selecties[0], selecties[1], selecties[2]):
+                speelveld.verwijder_kaarten_speelveld(selecties)
+                for i in selecties:
+                    kaart_group.remove(i)
+                speelveld.extra_kaarten_speelveld()
+                teken_veld(speelveld)
+                selecties = []
+                selectie_gemaakt = False
+                print("tadaa")
+            elif len(selecties) == 3:
+                selecties = []
+                selectie_gemaakt = False
+                print("geen set")
     
     
 
@@ -232,8 +250,6 @@ while True:
     DISPLAYSURF.fill(BLACK)
     kaart_group.draw(DISPLAYSURF)
     
-
-    #kaart_group.draw(DISPLAYSURF)
 
     DISPLAY.update()
     FramePerSec.tick(FPS)
