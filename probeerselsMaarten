@@ -118,40 +118,6 @@ class Speelveld:
         self.stack_kaarten = list(itertools.product((0,1,2), repeat=4))
         Speelveld.maak_speelveld(self.aantal_startkaarten)
 
-class Spel:
-    """Beschrijft de onderdelen van het spel en de mogelijke acties zoals een timer, en een scorde bord."""
-    def __init__(self):
-        self.speler = 0
-        self.computer = 0
-
-    
-    def start_spel(self):
-        Speelveld.maak_speelveld()
-        timer()
-
-    def punt_toewijzen(punten):
-        punten +=1
-        return punten
-
-    def check_selectie(self, selectie1, selectie2, selectie3):
-        if Speelveld.is_set(selectie1, selectie2, selectie3):
-            print("true")
-            setje = [selectie1, selectie2, selectie3]
-            #Spel.timer(self.moeilijkheid)
-            #Speelveld.verwijder_kaarten(setje)
-            #Speelveld.extra_kaarten_speelveld()
-            #Spel.punt_toewijzen(self.speler)
-        else:
-            print("false")
-            #Spel.punt_toewijzen(self.computer)
-
-    def nieuw_spel(self):
-        self.speler = 0
-        self.computer = 0
-        Speelveld.nieuw_speelveld()
-        Spel.timer(self.moeilijkheid)
-
-
 """Hier begint de echte display en de gameloop"""
 pygame.init()
 
@@ -172,7 +138,7 @@ DISPLAYSURF.fill(WHITE)
 pygame.display.set_caption("Game")
 
 
-# Text variabelen voor score en tijd
+# Text variabelen voor score en timer
 wit = (255,255,255)
 speler_score = 0
 computer_score = 0
@@ -181,10 +147,12 @@ computer_naam = "Computer"
 lettertype = pygame.font.Font("freesansbold.ttf", 32)
 
 # Timer
-lengte_timer = 30000
+lengte_timer = 30
+overige_tijd = 30
 tijdpunt = pygame.time.get_ticks()
+
 def timer():
-    global overige_tijd
+    global overige_tijd, tijdpunt, computer_score
     huidige_tijd = pygame.time.get_ticks()
     verstreken_tijd = (huidige_tijd - tijdpunt) // 1000
     overige_tijd = lengte_timer - verstreken_tijd
@@ -194,17 +162,15 @@ def timer():
             speelveld.extra_kaarten_speelveld()
             print("Er is geen set")
         else:
-            spel.punt_toewijzen(spel.computer)
+            computer_score += 1
         tijdpunt = huidige_tijd
 
 kaart_group = pygame.sprite.Group()
-spel = Spel()
 speelveld = Speelveld()
 speelveld.maak_speelveld()
 
 #creates a field of cards
 def teken_veld(speelveld):
-    # global timer, huidige_tijd
     row = 0
     col = 0
     for i in range(len(speelveld.veld)):
@@ -218,7 +184,6 @@ def teken_veld(speelveld):
         else:
             row += 200
             col -=300
-    # huidige_tijd = pygame.time.get_ticks()
 teken_veld(speelveld) 
 
 
@@ -254,7 +219,6 @@ while True:
             elif len(selecties) == 3:
                 selecties = []
                 selectie_gemaakt = False
-                computer_score += 1
                 print("geen set")
                 print(speelveld.zoek_set())
     
@@ -275,7 +239,9 @@ while True:
     computer1_text = lettertype.render(f"{computer_naam}",False, wit)
     DISPLAYSURF.blit(computer1_text, (530,120))
     timer_text = lettertype.render(f"Timer: {overige_tijd}", False, wit)
-    DISPLAYSURF.blit(timer_text, (600, 220))
+    DISPLAYSURF.blit(timer_text, (535, 220))
+
+    timer()
 
     DISPLAY.update()
     FramePerSec.tick(FPS)
