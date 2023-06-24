@@ -124,8 +124,6 @@ class Speelveld:
 class Spel:
     """Beschrijft de onderdelen van het spel en de mogelijke acties zoals een timer, en een scorde bord."""
     def __init__(self):
-        self.speler = 0
-        self.computer = 0
         self.moeilijkheid = 30
     
     def start_spel(self):
@@ -162,8 +160,6 @@ class Spel:
             #Spel.punt_toewijzen(self.computer)
 
     def nieuw_spel(self):
-        self.speler = 0
-        self.computer = 0
         Speelveld.nieuw_speelveld()
         Spel.timer(self.moeilijkheid)
 
@@ -183,11 +179,17 @@ SCREEN_WIDTH = 400
 SCREEN_HEIGHT = 600
 
 DISPLAY = pygame.display
-DISPLAYSURF = DISPLAY.set_mode((400, 600))
-DISPLAYSURF.fill(WHITE)
+DISPLAYSURF = DISPLAY.set_mode((700, 600))
 pygame.display.set_caption("Game")
 
-huidige_tijd = 0
+
+# Text variabelen voor score en tijd
+wit = (255,255,255)
+speler_score = 0
+computer_score = 0
+speler_naam = "Speler 1"
+computer_naam = "Computer"
+lettertype = pygame.font.Font("freesansbold.ttf", 32)
 
 
 
@@ -251,6 +253,14 @@ while True:
     DISPLAYSURF.fill(BLACK)
     kaart_group.draw(DISPLAYSURF)
     
+    speler_text = lettertype.render(f"{speler_score}",False, wit)
+    DISPLAYSURF.blit(speler_text, (600,70))
+    speler1_text = lettertype.render(f"{speler_naam}",False, wit)
+    DISPLAYSURF.blit(speler1_text, (540,20))
+    computer_text = lettertype.render(f"{computer_score}",False, wit)
+    DISPLAYSURF.blit(computer_text, (600,170))
+    computer1_text = lettertype.render(f"{computer_naam}",False, wit)
+    DISPLAYSURF.blit(computer1_text, (530,120))
 
     #kaart_group.draw(DISPLAYSURF)
 
