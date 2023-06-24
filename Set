@@ -180,7 +180,7 @@ SCREEN_WIDTH = 600
 SCREEN_HEIGHT = 600
 
 DISPLAY = pygame.display
-DISPLAYSURF = DISPLAY.set_mode((600, 600))
+DISPLAYSURF = DISPLAY.set_mode((700, 600))
 DISPLAYSURF.fill(WHITE)
 pygame.display.set_caption("Game")
 
