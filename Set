@@ -89,8 +89,6 @@ class Speelveld:
                         return True
         return False
     
-
-    
     def zoek_set(self):
             mogelijke_sets = []
             for i in range(len(self.veld)):
@@ -104,20 +102,18 @@ class Speelveld:
             return mogelijke_sets
 
     def extra_kaarten_speelveld(self):
-        self.veld += [Kaart(*Kaart.geef_willekeurige_kaart(self.stack_kaarten)) for _ in range(3)]
-        Speelveld.verwijder_kaarten(self.veld)
+        nieuwe_kaarten = [Kaart.geef_willekeurige_kaart(self.stack_kaarten) for _ in range(3)]
+        self.veld += nieuwe_kaarten
+        self.verwijder_kaarten(nieuwe_kaarten)
     
-    def verwijder_kaarten(self, setje):
-        for i in range(len(setje)):
-            if setje[i] in self.stack_kaarten:    
-                self.stack_kaarten.pop(i)
+    def verwijder_kaarten(self, kaarten):
+        for i in kaarten:  
+            self.stack_kaarten.remove(i)
     
     def verwijder_kaarten_speelveld(self, setje):
         for i in setje:
             self.veld.remove(i)
-           
-
-       
+            
     def nieuw_speelveld(self):
         self.stack_kaarten = list(itertools.product((0,1,2), repeat=4))
         Speelveld.maak_speelveld(self.aantal_startkaarten)
@@ -180,13 +176,16 @@ BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 
 # Screen information
-SCREEN_WIDTH = 400
+SCREEN_WIDTH = 600
 SCREEN_HEIGHT = 600
 
 DISPLAY = pygame.display
-DISPLAYSURF = DISPLAY.set_mode((400, 600))
+DISPLAYSURF = DISPLAY.set_mode((600, 600))
 DISPLAYSURF.fill(WHITE)
 pygame.display.set_caption("Game")
+
+huidige_tijd = 0
+
 
 
 kaart_group = pygame.sprite.Group()
@@ -220,18 +219,30 @@ while True:
             pygame.quit()
             sys.exit()
 
+        selectie_gemaakt = False
+
         if event.type == pygame.MOUSEBUTTONDOWN:
-            for kaart_instance in kaart_group:
-                if kaart_instance.rect.collidepoint(pygame.mouse.get_pos()):
-                    print(kaart_instance.attrs)
-                    selecties.append(kaart_instance)
-                    if len(selecties) == 3 and Speelveld.is_set(selecties[0],selecties[1],selecties[2]):
-                        speelveld.verwijder_kaarten_speelveld(selecties)
-                        teken_veld(speelveld)
-                        print("tadaa")
-                    elif len(selecties) == 3:
-                        selecties = []
-                        print("geen set")
+            if not selectie_gemaakt:
+                for kaart_instance in kaart_group:
+                    if kaart_instance.rect.collidepoint(pygame.mouse.get_pos()):
+                        print(kaart_instance.attrs)
+                        selecties.append(kaart_instance)
+                        selectie_gemaakt = True
+                        break
+
+            if len(selecties) == 3 and Speelveld.is_set(selecties[0], selecties[1], selecties[2]):
+                speelveld.verwijder_kaarten_speelveld(selecties)
+                for i in selecties:
+                    kaart_group.remove(i)
+                speelveld.extra_kaarten_speelveld()
+                teken_veld(speelveld)
+                selecties = []
+                selectie_gemaakt = False
+                print("tadaa")
+            elif len(selecties) == 3:
+                selecties = []
+                selectie_gemaakt = False
+                print("geen set")
     
     
 
@@ -239,8 +250,6 @@ while True:
     DISPLAYSURF.fill(BLACK)
     kaart_group.draw(DISPLAYSURF)
     
-
-    #kaart_group.draw(DISPLAYSURF)
 
     DISPLAY.update()
     FramePerSec.tick(FPS)
