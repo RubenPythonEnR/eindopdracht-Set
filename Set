@@ -184,9 +184,14 @@ DISPLAYSURF = DISPLAY.set_mode((600, 600))
 DISPLAYSURF.fill(WHITE)
 pygame.display.set_caption("Game")
 
-huidige_tijd = 0
 
-
+# Text variabelen voor score en tijd
+wit = (255,255,255)
+speler_score = 0
+computer_score = 0
+speler_naam = "Speler 1"
+computer_naam = "Computer"
+lettertype = pygame.font.Font("freesansbold.ttf", 32)
 
 kaart_group = pygame.sprite.Group()
 spel = Spel()
@@ -238,6 +243,7 @@ while True:
                 teken_veld(speelveld)
                 selecties = []
                 selectie_gemaakt = False
+                speler_score += 1
                 print("tadaa")
             elif len(selecties) == 3:
                 selecties = []
@@ -249,7 +255,15 @@ while True:
 
     DISPLAYSURF.fill(BLACK)
     kaart_group.draw(DISPLAYSURF)
-    
+
+    speler_text = lettertype.render(f"{speler_score}",False, wit)
+    DISPLAYSURF.blit(speler_text, (600,70))
+    speler1_text = lettertype.render(f"{speler_naam}",False, wit)
+    DISPLAYSURF.blit(speler1_text, (540,20))
+    computer_text = lettertype.render(f"{computer_score}",False, wit)
+    DISPLAYSURF.blit(computer_text, (600,170))
+    computer1_text = lettertype.render(f"{computer_naam}",False, wit)
+    DISPLAYSURF.blit(computer1_text, (530,120))
 
     DISPLAY.update()
     FramePerSec.tick(FPS)
