@@ -170,10 +170,10 @@ def timer():
         selecties = []
         tijdpunt = huidige_tijd
 
+#zorgen dat er een speelveld wordt opgeroepen en zorgen dat alle sprites van de kaart objecten in 1 keer opgeroepen kunnen worden
 kaart_group = pygame.sprite.Group()
 speelveld = Speelveld()
 speelveld.maak_speelveld()
-
 
 def teken_veld(speelveld):
     """maakt een speelveld met kaarten in pygame door de speelveld kaarten coordinaten te geven. 
@@ -241,6 +241,7 @@ while True:
             elif len(selecties) == 3:
                 selecties = []
                 selectie_gemaakt = False
+                computer_score +=1
                 print("geen set")
                 
     
