@@ -7,7 +7,7 @@ import itertools
 import time
 import datetime
 
-moeilijkheid = 30
+moeilijkheid = 10
 
 class Kaart(pygame.sprite.Sprite):
     """de klasse kaart heeft kaart objecten met een kleur, vorm, vulling, aantal en een sprite met een rect. Hiernaast heeft de klasse Kaart
@@ -30,7 +30,7 @@ class Kaart(pygame.sprite.Sprite):
         
 
     def load(self):
-        self.image = pygame.image.load(f"D:\MLS\PythonandR\kaarten\{self.return_string()}.gif")
+        self.image = pygame.image.load(f"C:\\Bruikbaar\\Utrecht\\Jaar 4\\Python en R\\Project\\kaarten\\kaarten\\{self.return_string()}.gif")
     
 
     def draw(self, surface):
@@ -38,7 +38,8 @@ class Kaart(pygame.sprite.Sprite):
 
     
     def geef_willekeurige_kaart(stack_kaarten):
-        willekeurige_kaart = random.choice(stack_kaarten)
+        if len(stack_kaarten) > 0:
+            willekeurige_kaart = random.choice(stack_kaarten)
         return willekeurige_kaart
     
     
@@ -82,11 +83,11 @@ class Speelveld:
         return self.veld
 
     def is_set(kaart1, kaart2, kaart3):
-        if (kaart1.aantal == kaart2.aantal and kaart2.aantal == kaart3.aantal ) or (kaart1.aantal != kaart2.aantal and kaart3.aantal != kaart1.aantal and kaart3.aantal != kaart2.aantal):
-            if (kaart1.kleur == kaart2.kleur and kaart2.kleur == kaart3.kleur) or (kaart1.kleur != kaart2.kleur and kaart3.kleur != kaart1.kleur and kaart3.kleur != kaart2.kleur):
-                if (kaart1.vorm == kaart2.vorm and kaart2.vorm == kaart3.vorm) or (kaart1.vorm != kaart2.vorm and kaart3.vorm != kaart1.vorm and kaart3.vorm != kaart2.vorm):
-                    if (kaart1.vulling == kaart2.vulling and kaart2.vulling == kaart3.vulling) or (kaart1.vulling != kaart2.vulling and kaart3.vulling != kaart1.vulling and kaart3.vulling != kaart2.vulling):
-                        return True
+        if ((kaart1.aantal == kaart2.aantal and kaart2.aantal == kaart3.aantal ) or (kaart1.aantal != kaart2.aantal and kaart3.aantal != kaart1.aantal and kaart3.aantal != kaart2.aantal)) and \
+        ((kaart1.kleur == kaart2.kleur and kaart2.kleur == kaart3.kleur) or (kaart1.kleur != kaart2.kleur and kaart3.kleur != kaart1.kleur and kaart3.kleur != kaart2.kleur)) and \
+        ((kaart1.vorm == kaart2.vorm and kaart2.vorm == kaart3.vorm) or (kaart1.vorm != kaart2.vorm and kaart3.vorm != kaart1.vorm and kaart3.vorm != kaart2.vorm)) and \
+        ((kaart1.vulling == kaart2.vulling and kaart2.vulling == kaart3.vulling) or (kaart1.vulling != kaart2.vulling and kaart3.vulling != kaart1.vulling and kaart3.vulling != kaart2.vulling)):
+            return True
         return False
     
     def zoek_set(self):
@@ -98,24 +99,25 @@ class Speelveld:
                     kaart2 = self.veld[j]
                     kaart3 = self.veld[k]
                     if Speelveld.is_set(kaart1, kaart2, kaart3):
-                        mogelijke_sets.append(kaart1)
-                        mogelijke_sets.append(kaart2)
-                        mogelijke_sets.append(kaart3)
-                        return mogelijke_sets
-                    else:
-                        print("geen set gevonden")
+                        mogelijke_sets.append(Kaart.return_string(kaart1))
+                        mogelijke_sets.append(Kaart.return_string(kaart2))
+                        mogelijke_sets.append(Kaart.return_string(kaart3))
         return mogelijke_sets
 
     def extra_kaarten_speelveld(self):
-        nieuwe_kaarten = [Kaart.geef_willekeurige_kaart(self.stack_kaarten) for _ in range(3)]
-        self.veld += nieuwe_kaarten
-        self.verwijder_kaarten(nieuwe_kaarten)
+        if len(self.stack_kaarten) > 2:
+            hoeveel_kaarten = 3
+        else:
+            hoeveel_kaarten = len(self.stack_kaarten)
+        if hoeveel_kaarten > 0:
+            nieuwe_kaarten = [Kaart.geef_willekeurige_kaart(self.stack_kaarten) for _ in range(hoeveel_kaarten)]
+            self.veld += nieuwe_kaarten
+            self.verwijder_kaarten(nieuwe_kaarten)
     
     def verwijder_kaarten(self, kaarten):
-        print("kaarten",len(kaarten))
         for i in kaarten:  
-            print("i", i.attrs)
-            self.stack_kaarten.remove(i)
+            if i in self.stack_kaarten:
+                self.stack_kaarten.remove(i)
     
     def verwijder_kaarten_speelveld(self, selecties):
         for i in selecties:
@@ -160,14 +162,11 @@ def timer():
         selecties = speelveld.zoek_set()
         if len(selecties)==0:
             print("Er is geen set")
-            speelveld.extra_kaarten_speelveld()
+            if len(speelveld.veld)< 12 and len(speelveld.stack_kaarten) > 0:
+                speelveld.extra_kaarten_speelveld()
         else:
             computer_score += 1
-            speelveld.verwijder_kaarten_speelveld(selecties)
-            for i in selecties:
-                kaart_group.remove(i)
-            if len(speelveld.veld)< 12:
-                speelveld.extra_kaarten_speelveld()
+            print("Er is een set")
         teken_veld(speelveld)
         selecties = []
         tijdpunt = huidige_tijd
@@ -245,6 +244,8 @@ while True:
                 selectie_gemaakt = False
                 computer_score +=1
                 print("geen set")
+                print(speelveld.zoek_set())
+                print(len(speelveld.stack_kaarten))
                 
     
     
