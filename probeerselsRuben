@@ -7,6 +7,8 @@ import itertools
 import time
 import datetime
 
+moeilijkheid = 2
+
 class Kaart(pygame.sprite.Sprite):
     """de klasse kaart heeft kaart objecten met een kleur, vorm, vulling, aantal en een sprite met een rect. Hiernaast heeft de klasse Kaart
     ook methods het tekenen van de kaarten en een random kaart te trekken"""
@@ -30,15 +32,14 @@ class Kaart(pygame.sprite.Sprite):
     def load(self):
         self.image = pygame.image.load(f"D:\MLS\PythonandR\kaarten\{self.return_string()}.gif")
     
-    # def __eq__(self, other):
-    #     return self.is_set(other)
 
     def draw(self, surface):
         surface.blit(self.image, self.rect)
 
     
     def geef_willekeurige_kaart(stack_kaarten):
-        willekeurige_kaart = random.choice(stack_kaarten)
+        if len(stack_kaarten) > 0:
+            willekeurige_kaart = random.choice(stack_kaarten)
         return willekeurige_kaart
     
     
@@ -82,132 +83,148 @@ class Speelveld:
         return self.veld
 
     def is_set(kaart1, kaart2, kaart3):
-        if (kaart1.aantal == kaart2.aantal == kaart3.aantal ) or ((kaart1.aantal != kaart2.aantal !=kaart3.aantal) and (kaart1.aantal != kaart3.aantal)):
-            if (kaart1.kleur == kaart2.kleur == kaart3.kleur) or ((kaart1.kleur != kaart2.kleur !=kaart3.kleur)and (kaart1.kleur != kaart3.kleur)):
-                if (kaart1.vorm == kaart2.vorm == kaart3.vorm) or ((kaart1.vorm != kaart2.vorm !=kaart3.vorm)and (kaart1.vorm != kaart3.vorm)):
-                    if (kaart1.vulling == kaart2.vulling == kaart3.vulling) or ((kaart1.vulling != kaart2.vulling !=kaart3.vulling)and (kaart1.vulling != kaart3.vulling)):
-                        return True
+        if ((kaart1.aantal == kaart2.aantal and kaart2.aantal == kaart3.aantal ) or (kaart1.aantal != kaart2.aantal and kaart3.aantal != kaart1.aantal and kaart3.aantal != kaart2.aantal)) and \
+        ((kaart1.kleur == kaart2.kleur and kaart2.kleur == kaart3.kleur) or (kaart1.kleur != kaart2.kleur and kaart3.kleur != kaart1.kleur and kaart3.kleur != kaart2.kleur)) and \
+        ((kaart1.vorm == kaart2.vorm and kaart2.vorm == kaart3.vorm) or (kaart1.vorm != kaart2.vorm and kaart3.vorm != kaart1.vorm and kaart3.vorm != kaart2.vorm)) and \
+        ((kaart1.vulling == kaart2.vulling and kaart2.vulling == kaart3.vulling) or (kaart1.vulling != kaart2.vulling and kaart3.vulling != kaart1.vulling and kaart3.vulling != kaart2.vulling)):
+            return True
         return False
     
     def zoek_set(self):
-            mogelijke_sets = []
-            for i in range(len(self.veld)):
-                for j in range(i + 1, len(self.veld)):
-                    for k in range(j + 1, len(self.veld)):
-                        kaart1 = self.veld[i]
-                        kaart2 = self.veld[j]
-                        kaart3 = self.veld[k]
-                        if Speelveld.is_set(kaart1, kaart2, kaart3):
-                            mogelijke_sets.append([kaart1,kaart2,kaart3])
-            return mogelijke_sets
+        mogelijke_sets = []
+        for i in range(len(self.veld)):
+            for j in range(i + 1, len(self.veld)):
+                for k in range(j + 1, len(self.veld)):
+                    kaart1 = self.veld[i]
+                    kaart2 = self.veld[j]
+                    kaart3 = self.veld[k]
+                    if Speelveld.is_set(kaart1, kaart2, kaart3):
+                        mogelijke_sets.append(kaart1)
+                        mogelijke_sets.append(kaart2)
+                        mogelijke_sets.append(kaart3)
+                        for i in mogelijke_sets:
+                            print(i.attrs)
+                        return mogelijke_sets
+        return mogelijke_sets
 
     def extra_kaarten_speelveld(self):
-        nieuwe_kaarten = [Kaart.geef_willekeurige_kaart(self.stack_kaarten) for _ in range(3)]
-        self.veld += nieuwe_kaarten
-        self.verwijder_kaarten(nieuwe_kaarten)
+        if len(self.stack_kaarten) > 2:
+            hoeveel_kaarten = 3
+        else:
+            hoeveel_kaarten = len(self.stack_kaarten)
+        if hoeveel_kaarten > 0:
+            nieuwe_kaarten = [Kaart.geef_willekeurige_kaart(self.stack_kaarten) for _ in range(hoeveel_kaarten)]
+            self.veld += nieuwe_kaarten
+            self.verwijder_kaarten(nieuwe_kaarten)
     
     def verwijder_kaarten(self, kaarten):
         for i in kaarten:  
-            self.stack_kaarten.remove(i)
+            if i in self.stack_kaarten:
+                self.stack_kaarten.remove(i)
     
-    def verwijder_kaarten_speelveld(self, setje):
-        for i in setje:
+    def verwijder_kaarten_speelveld(self, selecties):
+        for i in selecties:
             self.veld.remove(i)
             
     def nieuw_speelveld(self):
         self.stack_kaarten = list(itertools.product((0,1,2), repeat=4))
         Speelveld.maak_speelveld(self.aantal_startkaarten)
 
-class Spel:
-    """Beschrijft de onderdelen van het spel en de mogelijke acties zoals een timer, en een scorde bord."""
-    def __init__(self):
-        self.speler = 0
-        self.computer = 0
-        self.moeilijkheid = 30
-    
-    def start_spel(self):
-        Speelveld.maak_speelveld()
-        Spel.timer(self.moeilijkheid)
-
-    def timer(self, moeilijkheid):
-        tijd = moeilijkheid
-        while tijd > 0:
-            timer = datetime.timedelta(seconds = moeilijkheid)
-            #visualiseer timer
-            print(timer, end="\r")
-            time.sleep(1)
-            tijd -=1
-        if len(Speelveld.zoek_set()) == False:
-            Speelveld.extra_kaarten_speelveld()
-        else:
-            Spel.punt_toewijzen(self.computer)
-
-    def punt_toewijzen(punten):
-        punten +=1
-        return punten
-
-    def check_selectie(self, selectie1, selectie2, selectie3):
-        if Speelveld.is_set(selectie1, selectie2, selectie3):
-            print("true")
-            setje = [selectie1, selectie2, selectie3]
-            #Spel.timer(self.moeilijkheid)
-            #Speelveld.verwijder_kaarten(setje)
-            #Speelveld.extra_kaarten_speelveld()
-            #Spel.punt_toewijzen(self.speler)
-        else:
-            print("false")
-            #Spel.punt_toewijzen(self.computer)
-
-    def nieuw_spel(self):
-        self.speler = 0
-        self.computer = 0
-        Speelveld.nieuw_speelveld()
-        Spel.timer(self.moeilijkheid)
-
-
 """Hier begint de echte display en de gameloop"""
 pygame.init()
 
-FPS = 5
-FramePerSec = pygame.time.Clock()
-
-# Predefined some colors
+# vaste kleuren en het scherm
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
-
-# Screen information
-SCREEN_WIDTH = 600
-SCREEN_HEIGHT = 600
-
 DISPLAY = pygame.display
-DISPLAYSURF = DISPLAY.set_mode((600, 600))
-DISPLAYSURF.fill(WHITE)
+DISPLAYSURF = DISPLAY.set_mode((700, 600))
 pygame.display.set_caption("Game")
 
-huidige_tijd = 0
 
+# Text variabelen voor score en timer
+speler_score = 0
+computer_score = 0
+speler_naam = "Speler 1"
+computer_naam = "Computer"
+lettertype = pygame.font.Font("freesansbold.ttf", 32)
 
+# Timer
+lengte_timer = moeilijkheid
+overige_tijd = 2 #arbitraire nummer is alleen nodig voor initialisatie
+tijdpunt = pygame.time.get_ticks()
 
+def timer():
+    """Maakt een timer die afloopt en bij nul kijkt voor een set.
+     Het kan ook kaarten verwijderen en toevoegen"""
+    global overige_tijd, tijdpunt, computer_score, huidige_tijd, spel_voorbij
+    huidige_tijd = pygame.time.get_ticks()
+    verstreken_tijd = (huidige_tijd - tijdpunt) // 1000
+    overige_tijd = lengte_timer - verstreken_tijd
+    spel_voorbij = False
+
+    if overige_tijd <= 0:
+        selecties = speelveld.zoek_set()
+        if len(selecties)==0:
+            print("Er is geen set")
+            if len(speelveld.veld) <= 12 and len(speelveld.stack_kaarten) > 0:
+                speelveld.extra_kaarten_speelveld()
+            else:
+                spel_voorbij = True
+        else:
+            computer_score += 1
+            print("Er is een set")
+            speelveld.verwijder_kaarten_speelveld(selecties)
+            for i in selecties:
+                kaart_group.remove(i)
+            speelveld.extra_kaarten_speelveld()
+        teken_veld(speelveld)
+        selecties = []
+        tijdpunt = huidige_tijd
+
+    if spel_voorbij:
+        eindscore_text = lettertype.render(f"Eindscore: {speler_score} - {computer_score - 1}", False, WHITE)
+        DISPLAYSURF.blit(eindscore_text, (420, 550))
+        pygame.display.flip()
+
+        # Wachten voor sluiten van het spel
+        pygame.time.wait(10000)
+        pygame.quit()
+        sys.exit()
+
+#zorgen dat er een speelveld wordt opgeroepen en zorgen dat alle sprites van de kaart objecten in 1 keer opgeroepen kunnen worden
 kaart_group = pygame.sprite.Group()
-spel = Spel()
 speelveld = Speelveld()
 speelveld.maak_speelveld()
 
-#creates a field of cards
 def teken_veld(speelveld):
+    """maakt een speelveld met kaarten in pygame door de speelveld kaarten coordinaten te geven. 
+    Deze hangen af van hoeveel kaarten er in het spel zijn"""
     row = 0
     col = 0
-    for i in range(len(speelveld.veld)):
-        kaart_instance = speelveld.veld[i]
-        kaart_instance.give_position((col,row))
-        kaart_group.add(kaart_instance)
-        if col == 0:
-            col +=100
-        elif col %300 != 0:
-            col += 100
-        else:
-            row += 200
-            col -=300
+    if len(speelveld.veld) <= 12:
+        for i in range(len(speelveld.veld)):
+            kaart_instance = speelveld.veld[i]
+            kaart_instance.give_position((col,row))
+            kaart_group.add(kaart_instance)
+            if col == 0:
+                col +=100
+            elif col %300 != 0:
+                col += 100
+            else:
+                row += 200
+                col -=300
+    if len(speelveld.veld) == 15:
+        for i in range(len(speelveld.veld)):
+            kaart_instance = speelveld.veld[i]
+            kaart_instance.give_position((col,row))
+            kaart_group.add(kaart_instance)
+            if col == 0:
+                col +=100
+            elif col %400 != 0:
+                col += 100
+            else:
+                row += 200
+                col -=400
 teken_veld(speelveld) 
 
 
@@ -232,24 +249,45 @@ while True:
 
             if len(selecties) == 3 and Speelveld.is_set(selecties[0], selecties[1], selecties[2]):
                 speelveld.verwijder_kaarten_speelveld(selecties)
+                if len(speelveld.veld)< 12:
+                    speelveld.extra_kaarten_speelveld()
+                teken_veld(speelveld)
                 for i in selecties:
                     kaart_group.remove(i)
-                speelveld.extra_kaarten_speelveld()
-                teken_veld(speelveld)
                 selecties = []
                 selectie_gemaakt = False
-                print("tadaa")
+                speler_score += 1
+                tijdpunt = huidige_tijd
+                print("is een set")
             elif len(selecties) == 3:
                 selecties = []
                 selectie_gemaakt = False
+                computer_score +=1
                 print("geen set")
+                print(speelveld.zoek_set())
+                print(len(speelveld.stack_kaarten))
+                
     
     
 
-
+    #achtergrond zwart met daarop de kaarten
     DISPLAYSURF.fill(BLACK)
     kaart_group.draw(DISPLAYSURF)
-    
 
+
+    #tijdens de game loop worden hier de timer en de scores aan gegeven
+    speler_text = lettertype.render(f"{speler_score}",False, WHITE)
+    DISPLAYSURF.blit(speler_text, (600,70))
+    speler1_text = lettertype.render(f"{speler_naam}",False, WHITE)
+    DISPLAYSURF.blit(speler1_text, (540,20))
+    computer_text = lettertype.render(f"{computer_score}",False, WHITE)
+    DISPLAYSURF.blit(computer_text, (600,170))
+    computer1_text = lettertype.render(f"{computer_naam}",False, WHITE)
+    DISPLAYSURF.blit(computer1_text, (530,120))
+    timer_text = lettertype.render(f"Timer: {overige_tijd}", False, WHITE)
+    DISPLAYSURF.blit(timer_text, (535, 220))
+
+    #constante oproep timer en update van het scherm
+    timer()
     DISPLAY.update()
-    FramePerSec.tick(FPS)
+    
