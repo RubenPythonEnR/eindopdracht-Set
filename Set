@@ -80,16 +80,15 @@ class Speelveld:
         return self.veld
 
     def is_set(kaart1, kaart2, kaart3):
-        if (kaart1.aantal == kaart2.aantal == kaart3.aantal ) or ((kaart1.aantal != kaart2.aantal !=kaart3.aantal) and (kaart1.aantal != kaart3.aantal)):
-            if (kaart1.kleur == kaart2.kleur == kaart3.kleur) or ((kaart1.kleur != kaart2.kleur !=kaart3.kleur)and (kaart1.kleur != kaart3.kleur)):
-                if (kaart1.vorm == kaart2.vorm == kaart3.vorm) or ((kaart1.vorm != kaart2.vorm !=kaart3.vorm)and (kaart1.vorm != kaart3.vorm)):
-                    if (kaart1.vulling == kaart2.vulling == kaart3.vulling) or ((kaart1.vulling != kaart2.vulling !=kaart3.vulling)and (kaart1.vulling != kaart3.vulling)):
+        if (kaart1.aantal == kaart2.aantal and kaart2.aantal == kaart3.aantal ) or (kaart1.aantal != kaart2.aantal and kaart3.aantal != kaart1.aantal and kaart3.aantal != kaart2.aantal):
+            if (kaart1.kleur == kaart2.kleur and kaart2.kleur == kaart3.kleur) or (kaart1.kleur != kaart2.kleur and kaart3.kleur != kaart1.kleur and kaart3.kleur != kaart2.kleur):
+                if (kaart1.vorm == kaart2.vorm and kaart2.vorm == kaart3.vorm) or (kaart1.vorm != kaart2.vorm and kaart3.vorm != kaart1.vorm and kaart3.vorm != kaart2.vorm):
+                    if (kaart1.vulling == kaart2.vulling and kaart2.vulling == kaart3.vulling) or (kaart1.vulling != kaart2.vulling and kaart3.vulling != kaart1.vulling and kaart3.vulling != kaart2.vulling):
                         return True
         return False
     
     def zoek_set(self):
         mogelijke_sets = []
-        print("test")
         for i in range(len(self.veld)):
             for j in range(i + 1, len(self.veld)):
                 for k in range(j + 1, len(self.veld)):
@@ -100,7 +99,6 @@ class Speelveld:
                         mogelijke_sets.append(kaart1)
                         mogelijke_sets.append(kaart2)
                         mogelijke_sets.append(kaart3)
-                        print("mogelijke_sets",mogelijke_sets)
                         return mogelijke_sets
         return mogelijke_sets
 
@@ -110,7 +108,9 @@ class Speelveld:
         self.verwijder_kaarten(nieuwe_kaarten)
     
     def verwijder_kaarten(self, kaarten):
+        print("kaarten",len(kaarten))
         for i in kaarten:  
+            print("i", i.attrs)
             self.stack_kaarten.remove(i)
     
     def verwijder_kaarten_speelveld(self, selecties):
@@ -162,7 +162,6 @@ def timer():
 
     if overige_tijd <= 0:
         selecties = speelveld.zoek_set()
-        print("selecties",selecties)
         if len(selecties)==0:
             print("Er is geen set")
             speelveld.extra_kaarten_speelveld()
@@ -171,7 +170,7 @@ def timer():
             speelveld.verwijder_kaarten_speelveld(selecties)
             for i in selecties:
                 kaart_group.remove(i)
-            if len(speelveld)< 12:
+            if len(speelveld.veld)< 12:
                 speelveld.extra_kaarten_speelveld()
         teken_veld(speelveld)
         selecties = []
@@ -235,7 +234,7 @@ while True:
                 speelveld.verwijder_kaarten_speelveld(selecties)
                 for i in selecties:
                     kaart_group.remove(i)
-                if len(speelveld)< 12:
+                if len(speelveld.veld)< 12:
                     speelveld.extra_kaarten_speelveld()
                 teken_veld(speelveld)
                 selecties = []
@@ -247,7 +246,7 @@ while True:
                 selecties = []
                 selectie_gemaakt = False
                 print("geen set")
-                print(speelveld.zoek_set())
+                # print(speelveld.zoek_set())
     
     
 
