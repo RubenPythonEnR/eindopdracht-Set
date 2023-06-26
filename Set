@@ -162,7 +162,7 @@ def timer():
         selecties = speelveld.zoek_set()
         if len(selecties)==0:
             print("Er is geen set")
-            if len(speelveld.veld)< 12 and len(speelveld.stack_kaarten) > 0:
+            if len(speelveld.veld) <= 12 and len(speelveld.stack_kaarten) > 0:
                 speelveld.extra_kaarten_speelveld()
         else:
             computer_score += 1
