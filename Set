@@ -7,7 +7,7 @@ import itertools
 import time
 import datetime
 
-moeilijkheid = 10
+moeilijkheid = 1
 
 class Kaart(pygame.sprite.Sprite):
     """de klasse kaart heeft kaart objecten met een kleur, vorm, vulling, aantal en een sprite met een rect. Hiernaast heeft de klasse Kaart
@@ -30,7 +30,7 @@ class Kaart(pygame.sprite.Sprite):
         
 
     def load(self):
-        self.image = pygame.image.load(f"C:\\Bruikbaar\\Utrecht\\Jaar 4\\Python en R\\Project\\kaarten\\kaarten\\{self.return_string()}.gif")
+        self.image = pygame.image.load(f"D:\MLS\PythonandR\kaarten\{self.return_string()}.gif")
     
 
     def draw(self, surface):
@@ -40,6 +40,7 @@ class Kaart(pygame.sprite.Sprite):
     def geef_willekeurige_kaart(stack_kaarten):
         if len(stack_kaarten) > 0:
             willekeurige_kaart = random.choice(stack_kaarten)
+            stack_kaarten.remove(willekeurige_kaart)
         return willekeurige_kaart
     
     
@@ -99,9 +100,12 @@ class Speelveld:
                     kaart2 = self.veld[j]
                     kaart3 = self.veld[k]
                     if Speelveld.is_set(kaart1, kaart2, kaart3):
-                        mogelijke_sets.append(Kaart.return_string(kaart1))
-                        mogelijke_sets.append(Kaart.return_string(kaart2))
-                        mogelijke_sets.append(Kaart.return_string(kaart3))
+                        mogelijke_sets.append(kaart1)
+                        mogelijke_sets.append(kaart2)
+                        mogelijke_sets.append(kaart3)
+                        for i in mogelijke_sets:
+                            print(i.attrs)
+                        return mogelijke_sets
         return mogelijke_sets
 
     def extra_kaarten_speelveld(self):
@@ -170,6 +174,11 @@ def timer():
         else:
             computer_score += 1
             print("Er is een set")
+            speelveld.verwijder_kaarten_speelveld(selecties)
+            for i in selecties:
+                kaart_group.remove(i)
+            if len(speelveld.veld) <12:
+                speelveld.extra_kaarten_speelveld()
         teken_veld(speelveld)
         selecties = []
         tijdpunt = huidige_tijd
@@ -180,7 +189,7 @@ def timer():
         pygame.display.flip()
 
         # Wachten voor sluiten van het spel
-        pygame.time.wait(10000)
+        pygame.time.wait(5000)
         pygame.quit()
         sys.exit()
 
@@ -266,8 +275,7 @@ while True:
     #achtergrond zwart met daarop de kaarten
     DISPLAYSURF.fill(BLACK)
     kaart_group.draw(DISPLAYSURF)
-
-
+    
     #tijdens de game loop worden hier de timer en de scores aan gegeven
     speler_text = lettertype.render(f"{speler_score}",False, WHITE)
     DISPLAYSURF.blit(speler_text, (600,70))
