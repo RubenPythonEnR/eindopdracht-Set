@@ -176,7 +176,8 @@ def timer():
             speelveld.verwijder_kaarten_speelveld(selecties)
             for i in selecties:
                 kaart_group.remove(i)
-            speelveld.extra_kaarten_speelveld()
+            if len(speelveld.veld) <12:
+                speelveld.extra_kaarten_speelveld()
         teken_veld(speelveld)
         selecties = []
         tijdpunt = huidige_tijd
