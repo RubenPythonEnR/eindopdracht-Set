@@ -100,6 +100,8 @@ class Speelveld:
                         mogelijke_sets.append(kaart2)
                         mogelijke_sets.append(kaart3)
                         return mogelijke_sets
+                    else:
+                        print("geen set gevonden")
         return mogelijke_sets
 
     def extra_kaarten_speelveld(self):
@@ -124,25 +126,15 @@ class Speelveld:
 """Hier begint de echte display en de gameloop"""
 pygame.init()
 
-FPS = 5
-FramePerSec = pygame.time.Clock()
-
-# Predefined some colors
+# vaste kleuren en het scherm
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
-
-# Screen information
-SCREEN_WIDTH = 600
-SCREEN_HEIGHT = 600
-
 DISPLAY = pygame.display
 DISPLAYSURF = DISPLAY.set_mode((700, 600))
-DISPLAYSURF.fill(WHITE)
 pygame.display.set_caption("Game")
 
 
 # Text variabelen voor score en timer
-wit = (255,255,255)
 speler_score = 0
 computer_score = 0
 speler_naam = "Speler 1"
@@ -150,11 +142,13 @@ computer_naam = "Computer"
 lettertype = pygame.font.Font("freesansbold.ttf", 32)
 
 # Timer
-lengte_timer = 2
-overige_tijd = 2
+lengte_timer = 5
+overige_tijd = 2 #arbitraire nummer is alleen nodig voor initializatie
 tijdpunt = pygame.time.get_ticks()
 
 def timer():
+    """Maakt een timer die afloopt en bij nul kijkt voor een set.
+     Het kan ook kaarten verwijderen en toevoegen"""
     global overige_tijd, tijdpunt, computer_score, huidige_tijd
     huidige_tijd = pygame.time.get_ticks()
     verstreken_tijd = (huidige_tijd - tijdpunt) // 1000
@@ -180,8 +174,10 @@ kaart_group = pygame.sprite.Group()
 speelveld = Speelveld()
 speelveld.maak_speelveld()
 
-#creates a field of cards
+
 def teken_veld(speelveld):
+    """maakt een speelveld met kaarten in pygame door de speelveld kaarten coordinaten te geven. 
+    Deze hangen af van hoeveel kaarten er in het spel zijn"""
     row = 0
     col = 0
     if len(speelveld.veld) == 12:
@@ -241,33 +237,33 @@ while True:
                 selectie_gemaakt = False
                 speler_score += 1
                 tijdpunt = huidige_tijd
-                print("tadaa")
+                print("is een set")
             elif len(selecties) == 3:
                 selecties = []
                 selectie_gemaakt = False
                 print("geen set")
-                # print(speelveld.zoek_set())
+                
     
     
 
-
+    #achtergrond zwart met daarop de kaarten
     DISPLAYSURF.fill(BLACK)
     kaart_group.draw(DISPLAYSURF)
 
 
-
-    speler_text = lettertype.render(f"{speler_score}",False, wit)
+    #tijdens de game loop worden hier de timer en de scores aan gegeven
+    speler_text = lettertype.render(f"{speler_score}",False, WHITE)
     DISPLAYSURF.blit(speler_text, (600,70))
-    speler1_text = lettertype.render(f"{speler_naam}",False, wit)
+    speler1_text = lettertype.render(f"{speler_naam}",False, WHITE)
     DISPLAYSURF.blit(speler1_text, (540,20))
-    computer_text = lettertype.render(f"{computer_score}",False, wit)
+    computer_text = lettertype.render(f"{computer_score}",False, WHITE)
     DISPLAYSURF.blit(computer_text, (600,170))
-    computer1_text = lettertype.render(f"{computer_naam}",False, wit)
+    computer1_text = lettertype.render(f"{computer_naam}",False, WHITE)
     DISPLAYSURF.blit(computer1_text, (530,120))
-    timer_text = lettertype.render(f"Timer: {overige_tijd}", False, wit)
+    timer_text = lettertype.render(f"Timer: {overige_tijd}", False, WHITE)
     DISPLAYSURF.blit(timer_text, (535, 220))
 
+    #constante oproep timer en update van het scherm
     timer()
-
     DISPLAY.update()
-    FramePerSec.tick(FPS)
+    
