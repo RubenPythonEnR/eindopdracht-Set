@@ -142,8 +142,8 @@ computer_naam = "Computer"
 lettertype = pygame.font.Font("freesansbold.ttf", 32)
 
 # Timer
-lengte_timer = 5
-overige_tijd = 2 #arbitraire nummer is alleen nodig voor initializatie
+lengte_timer = 1
+overige_tijd = 2 #arbitraire nummer is alleen nodig voor initialisatie
 tijdpunt = pygame.time.get_ticks()
 
 def timer():
