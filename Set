@@ -7,6 +7,8 @@ import itertools
 import time
 import datetime
 
+moeilijkheid = 30
+
 class Kaart(pygame.sprite.Sprite):
     """de klasse kaart heeft kaart objecten met een kleur, vorm, vulling, aantal en een sprite met een rect. Hiernaast heeft de klasse Kaart
     ook methods het tekenen van de kaarten en een random kaart te trekken"""
@@ -142,7 +144,7 @@ computer_naam = "Computer"
 lettertype = pygame.font.Font("freesansbold.ttf", 32)
 
 # Timer
-lengte_timer = 1
+lengte_timer = moeilijkheid
 overige_tijd = 2 #arbitraire nummer is alleen nodig voor initialisatie
 tijdpunt = pygame.time.get_ticks()
 
