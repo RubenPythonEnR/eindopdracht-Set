@@ -7,7 +7,7 @@ import itertools
 import time
 import datetime
 
-moeilijkheid = 1
+moeilijkheid = 30
 
 class Kaart(pygame.sprite.Sprite):
     """de klasse kaart heeft kaart objecten met een kleur, vorm, vulling, aantal en een sprite met een rect. Hiernaast heeft de klasse Kaart
@@ -103,8 +103,6 @@ class Speelveld:
                         mogelijke_sets.append(kaart1)
                         mogelijke_sets.append(kaart2)
                         mogelijke_sets.append(kaart3)
-                        for i in mogelijke_sets:
-                            print(i.attrs)
                         return mogelijke_sets
         return mogelijke_sets
 
@@ -244,7 +242,6 @@ while True:
             if not selectie_gemaakt:
                 for kaart_instance in kaart_group:
                     if kaart_instance.rect.collidepoint(pygame.mouse.get_pos()):
-                        print(kaart_instance.attrs)
                         selecties.append(kaart_instance)
                         selectie_gemaakt = True
                         break
@@ -266,8 +263,7 @@ while True:
                 selectie_gemaakt = False
                 computer_score +=1
                 print("geen set")
-                print(speelveld.zoek_set())
-                print(len(speelveld.stack_kaarten))
+                
                 
     
     
