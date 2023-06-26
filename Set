@@ -153,10 +153,11 @@ tijdpunt = pygame.time.get_ticks()
 def timer():
     """Maakt een timer die afloopt en bij nul kijkt voor een set.
      Het kan ook kaarten verwijderen en toevoegen"""
-    global overige_tijd, tijdpunt, computer_score, huidige_tijd
+    global overige_tijd, tijdpunt, computer_score, huidige_tijd, spel_voorbij
     huidige_tijd = pygame.time.get_ticks()
     verstreken_tijd = (huidige_tijd - tijdpunt) // 1000
     overige_tijd = lengte_timer - verstreken_tijd
+    spel_voorbij = False
 
     if overige_tijd <= 0:
         selecties = speelveld.zoek_set()
@@ -164,12 +165,24 @@ def timer():
             print("Er is geen set")
             if len(speelveld.veld) <= 12 and len(speelveld.stack_kaarten) > 0:
                 speelveld.extra_kaarten_speelveld()
+            else:
+                spel_voorbij = True
         else:
             computer_score += 1
             print("Er is een set")
         teken_veld(speelveld)
         selecties = []
         tijdpunt = huidige_tijd
+
+    if spel_voorbij:
+        eindscore_text = lettertype.render(f"Eindscore: {speler_score} - {computer_score - 1}", False, WHITE)
+        DISPLAYSURF.blit(eindscore_text, (420, 550))
+        pygame.display.flip()
+
+        # Wachten voor sluiten van het spel
+        pygame.time.wait(10000)
+        pygame.quit()
+        sys.exit()
 
 #zorgen dat er een speelveld wordt opgeroepen en zorgen dat alle sprites van de kaart objecten in 1 keer opgeroepen kunnen worden
 kaart_group = pygame.sprite.Group()
@@ -181,7 +194,7 @@ def teken_veld(speelveld):
     Deze hangen af van hoeveel kaarten er in het spel zijn"""
     row = 0
     col = 0
-    if len(speelveld.veld) == 12:
+    if len(speelveld.veld) <= 12:
         for i in range(len(speelveld.veld)):
             kaart_instance = speelveld.veld[i]
             kaart_instance.give_position((col,row))
@@ -229,11 +242,11 @@ while True:
 
             if len(selecties) == 3 and Speelveld.is_set(selecties[0], selecties[1], selecties[2]):
                 speelveld.verwijder_kaarten_speelveld(selecties)
-                for i in selecties:
-                    kaart_group.remove(i)
                 if len(speelveld.veld)< 12:
                     speelveld.extra_kaarten_speelveld()
                 teken_veld(speelveld)
+                for i in selecties:
+                    kaart_group.remove(i)
                 selecties = []
                 selectie_gemaakt = False
                 speler_score += 1
