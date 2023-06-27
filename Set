@@ -7,7 +7,7 @@ import itertools
 import time
 import datetime
 
-moeilijkheid = 30
+moeilijkheid = 5
 
 class Kaart(pygame.sprite.Sprite):
     """de klasse kaart heeft kaart objecten met een kleur, vorm, vulling, aantal en een sprite met een rect. Hiernaast heeft de klasse Kaart
@@ -155,13 +155,14 @@ tijdpunt = pygame.time.get_ticks()
 def timer():
     """Maakt een timer die afloopt en bij nul kijkt voor een set.
      Het kan ook kaarten verwijderen en toevoegen"""
-    global overige_tijd, tijdpunt, computer_score, huidige_tijd, spel_voorbij
+    global overige_tijd, tijdpunt, computer_score, huidige_tijd, spel_voorbij, selecties_speler
     huidige_tijd = pygame.time.get_ticks()
     verstreken_tijd = (huidige_tijd - tijdpunt) // 1000
     overige_tijd = lengte_timer - verstreken_tijd
     spel_voorbij = False
 
     if overige_tijd <= 0:
+        selecties_speler = []
         selecties = speelveld.zoek_set()
         if len(selecties)==0:
             print("Er is geen set")
@@ -228,7 +229,7 @@ def teken_veld(speelveld):
 teken_veld(speelveld) 
 
 
-selecties =[]
+selecties_speler =[]
 
 while True:
     for event in pygame.event.get():
@@ -242,24 +243,25 @@ while True:
             if not selectie_gemaakt:
                 for kaart_instance in kaart_group:
                     if kaart_instance.rect.collidepoint(pygame.mouse.get_pos()):
-                        selecties.append(kaart_instance)
+                        selecties_speler.append(kaart_instance)
+                        print(kaart_instance.attrs)
                         selectie_gemaakt = True
                         break
 
-            if len(selecties) == 3 and Speelveld.is_set(selecties[0], selecties[1], selecties[2]):
-                speelveld.verwijder_kaarten_speelveld(selecties)
+            if len(selecties_speler) == 3 and Speelveld.is_set(selecties_speler[0], selecties_speler[1], selecties_speler[2]):
+                speelveld.verwijder_kaarten_speelveld(selecties_speler)
                 if len(speelveld.veld)< 12:
                     speelveld.extra_kaarten_speelveld()
                 teken_veld(speelveld)
-                for i in selecties:
+                for i in selecties_speler:
                     kaart_group.remove(i)
-                selecties = []
+                selecties_speler = []
                 selectie_gemaakt = False
                 speler_score += 1
                 tijdpunt = huidige_tijd
                 print("is een set")
-            elif len(selecties) == 3:
-                selecties = []
+            elif len(selecties_speler) == 3:
+                selecties_speler = []
                 selectie_gemaakt = False
                 computer_score +=1
                 print("geen set")
