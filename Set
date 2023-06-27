@@ -162,7 +162,7 @@ def timer():
     spel_voorbij = False
 
     if overige_tijd <= 0:
-        selecties_speler = []
+        selecties_speler = set()
         selecties = speelveld.zoek_set()
         if len(selecties)==0:
             print("Er is geen set")
@@ -229,7 +229,7 @@ def teken_veld(speelveld):
 teken_veld(speelveld) 
 
 
-selecties_speler =[]
+selecties_speler =set()
 
 while True:
     for event in pygame.event.get():
@@ -243,11 +243,12 @@ while True:
             if not selectie_gemaakt:
                 for kaart_instance in kaart_group:
                     if kaart_instance.rect.collidepoint(pygame.mouse.get_pos()):
-                        selecties_speler.append(kaart_instance)
+                        selecties_speler.add(kaart_instance)
                         print(kaart_instance.attrs)
                         selectie_gemaakt = True
                         break
-
+            if len(selecties_speler)==3:
+                selecties_speler = list(selecties_speler)
             if len(selecties_speler) == 3 and Speelveld.is_set(selecties_speler[0], selecties_speler[1], selecties_speler[2]):
                 speelveld.verwijder_kaarten_speelveld(selecties_speler)
                 if len(speelveld.veld)< 12:
