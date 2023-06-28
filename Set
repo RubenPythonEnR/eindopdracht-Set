@@ -1,8 +1,11 @@
 import pygame
 import sys
 from pygame.locals import *
+
 import random
 import itertools
+import time
+import datetime
 
 moeilijkheid = 30
 
@@ -24,12 +27,10 @@ class Kaart(pygame.sprite.Sprite):
 
     def load(self):
         self.image = pygame.image.load(f"Plak_map_pad_hier{self.return_string()}.gif")
-    
 
     def draw(self, surface):
         surface.blit(self.image, self.rect)
 
-    
     def geef_willekeurige_kaart(stack_kaarten):
         if len(stack_kaarten) > 0:
             willekeurige_kaart = random.choice(stack_kaarten)
@@ -119,8 +120,9 @@ class Speelveld:
             self.veld.remove(i)
             
     def nieuw_speelveld(self):
-        self.stack_kaarten = list(itertools.product((0,1,2), repeat=4))
-        Speelveld.maak_speelveld(self.aantal_startkaarten)
+        self.veld = []
+        self.stack_kaarten = [Kaart(tup[0], tup[1], tup[2], tup[3]) for tup in list(itertools.product((0,1,2), repeat=4))]
+        self.maak_speelveld()
 
 """Vanaf hier begint de echte display en de gameloop"""
 pygame.init()
@@ -131,7 +133,6 @@ WHITE = (255, 255, 255)
 DISPLAY = pygame.display
 DISPLAYSURF = DISPLAY.set_mode((700, 600))
 pygame.display.set_caption("Game")
-
 
 # Text variabelen voor score en timer
 speler_score = 0
@@ -148,7 +149,7 @@ tijdpunt = pygame.time.get_ticks()
 def timer():
     """Maakt een timer die afloopt en bij nul kijkt voor een set.
      Het kan ook kaarten verwijderen en toevoegen"""
-    global overige_tijd, tijdpunt, computer_score, huidige_tijd, spel_voorbij, selecties_speler
+    global overige_tijd, tijdpunt, speler_score, computer_score, huidige_tijd, spel_voorbij, selecties_speler
     huidige_tijd = pygame.time.get_ticks()
     verstreken_tijd = (huidige_tijd - tijdpunt) // 1000
     overige_tijd = lengte_timer - verstreken_tijd
@@ -180,10 +181,11 @@ def timer():
         DISPLAYSURF.blit(eindscore_text, (420, 550))
         pygame.display.flip()
 
-        # Wachten voor sluiten van het spel
+        # Wachten voor herstarten van het spel
         pygame.time.wait(7500)
-        pygame.quit()
-        sys.exit()
+        speler_score = 0
+        computer_score = 0
+        speelveld.nieuw_speelveld()
 
 #zorgen dat er een speelveld wordt opgeroepen en zorgen dat alle sprites van de kaart objecten in 1 keer opgeroepen kunnen worden
 kaart_group = pygame.sprite.Group()
@@ -220,7 +222,7 @@ def teken_veld(speelveld):
                 row += 200
                 col -=400
 
-teken_veld(speelveld) 
+teken_veld(speelveld)
 
 selecties_speler =set()     #om te zorgen dat er niet meerdere keren de zelfde kaart wordt gekozen
 
@@ -260,10 +262,7 @@ while True:
                 computer_score +=1
                 print("geen set")
                 
-                
-    
-    
-
+        
     #achtergrond zwart met daarop de kaarten
     DISPLAYSURF.fill(BLACK)
     kaart_group.draw(DISPLAYSURF)
@@ -283,4 +282,3 @@ while True:
     #constante oproep timer en update van het scherm
     timer()
     DISPLAY.update()
-    
