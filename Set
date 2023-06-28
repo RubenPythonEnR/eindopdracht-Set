@@ -4,7 +4,7 @@ from pygame.locals import *
 import random
 import itertools
 
-moeilijkheid = 5
+moeilijkheid = 30
 
 class Kaart(pygame.sprite.Sprite):
     """de klasse kaart heeft kaart objecten met een kleur, vorm, vulling, aantal en een sprite met een rect. Hiernaast heeft de klasse Kaart
@@ -176,12 +176,12 @@ def timer():
         tijdpunt = huidige_tijd
 
     if spel_voorbij:
-        eindscore_text = lettertype.render(f"Eindscore: {speler_score} - {computer_score - 1}", False, WHITE)
+        eindscore_text = lettertype.render(f"Eindscore: {speler_score} - {computer_score}", False, WHITE)
         DISPLAYSURF.blit(eindscore_text, (420, 550))
         pygame.display.flip()
 
         # Wachten voor sluiten van het spel
-        pygame.time.wait(5000)
+        pygame.time.wait(7500)
         pygame.quit()
         sys.exit()
 
