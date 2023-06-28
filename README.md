@@ -1,4 +1,7 @@
 # Handleiding voor ons geschreven programma van het spel SET!
+Set is een kaartspel waar het de bedoeling is zoveel mogelijk sets te verzamelen.
+Het spel bevat 81 unieke kaarten met 4 eigenschappen. 
+Iets is een set als de drie kaarten per eigenschap of allemaal gelijk of allemaal verschillend zijn.
 
 Om het spel te kunnen spelen is de module pygame vereist. 
 Dit valt te downloaden en installeren volgens https://www.pygame.org/wiki/GettingStarted. 
