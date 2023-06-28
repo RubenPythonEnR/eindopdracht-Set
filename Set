@@ -1,11 +1,8 @@
 import pygame
 import sys
 from pygame.locals import *
-
 import random
 import itertools
-import time
-import datetime
 
 moeilijkheid = 5
 
