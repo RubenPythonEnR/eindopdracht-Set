@@ -18,19 +18,15 @@ class Kaart(pygame.sprite.Sprite):
         self.vulling = vulling
         self.aantal = aantal
         self.attrs = (self.kleur, self.vorm, self.vulling, self.aantal)
-        super().__init__()
+        super().__init__()      #om te zorgen dat de sprites ook worden geinitialiseerd
         self.load()
         self.rect = self.image.get_rect()
 
-    def give_position(self, position):
+    def geef_positie(self, position):
         self.rect.topleft = position
 
-    def update(self):
-        self.load()
-        
-
     def load(self):
-        self.image = pygame.image.load(f"D:\MLS\PythonandR\kaarten\{self.return_string()}.gif")
+        self.image = pygame.image.load(f"Plak_map_pad_hier{self.return_string()}.gif")
     
 
     def draw(self, surface):
@@ -44,7 +40,7 @@ class Kaart(pygame.sprite.Sprite):
         return willekeurige_kaart
     
     
-    def return_string(self):
+    def return_string(self):        #nodig om de gegeven tuples om te zetten in woorden zodat ze gevonden kunnen worden als image
         kleur_naam = {
             0 : "green",
             1 : "purple",
@@ -129,7 +125,7 @@ class Speelveld:
         self.stack_kaarten = list(itertools.product((0,1,2), repeat=4))
         Speelveld.maak_speelveld(self.aantal_startkaarten)
 
-"""Hier begint de echte display en de gameloop"""
+"""Vanaf hier begint de echte display en de gameloop"""
 pygame.init()
 
 # vaste kleuren en het scherm
@@ -205,7 +201,7 @@ def teken_veld(speelveld):
     if len(speelveld.veld) <= 12:
         for i in range(len(speelveld.veld)):
             kaart_instance = speelveld.veld[i]
-            kaart_instance.give_position((col,row))
+            kaart_instance.geef_positie((col,row))
             kaart_group.add(kaart_instance)
             if col == 0:
                 col +=100
@@ -217,7 +213,7 @@ def teken_veld(speelveld):
     if len(speelveld.veld) == 15:
         for i in range(len(speelveld.veld)):
             kaart_instance = speelveld.veld[i]
-            kaart_instance.give_position((col,row))
+            kaart_instance.geef_positie((col,row))
             kaart_group.add(kaart_instance)
             if col == 0:
                 col +=100
@@ -226,10 +222,10 @@ def teken_veld(speelveld):
             else:
                 row += 200
                 col -=400
+
 teken_veld(speelveld) 
 
-
-selecties_speler =set()
+selecties_speler =set()     #om te zorgen dat er niet meerdere keren de zelfde kaart wordt gekozen
 
 while True:
     for event in pygame.event.get():
